@@ -174,20 +174,26 @@ public class PieceBlock{
 		//seems wordy, also the below has not been implemented
 
 		for (int i = 0; i < shape.length; i++) {
-				for (int j = 0; j < shape[i].length; j++) {
-					if(arrX + j > -1 && arrX + j < blocks[0].length) {
-						if (shape[i][j]) {
-							if (arrY + i > blocks.length - 1 || blocks[arrY + i][arrX + j] != null) {
-								isBlocked = true;
-								return isBlocked;
+				if (arrY + i > -1 && arrY + i < blocks.length) {	
+					for (int j = 0; j < shape[i].length; j++) {
+						if(arrX + j > -1 && arrX + j < blocks[0].length) {
+							if (shape[i][j]) {
+								if (arrY + i > blocks.length - 1 || blocks[arrY + i][arrX + j] != null) {
+									isBlocked = true;
+									return isBlocked;
+								}
 							}
 						}
+						else {
+							isBlocked = true;
+							return isBlocked;
+						}
+						
 					}
-					else {
-						isBlocked = true;
-						return isBlocked;
-					}
-					
+				}
+				else {
+					isBlocked = true;
+					return isBlocked;
 				}
 			}
 		return isBlocked;
