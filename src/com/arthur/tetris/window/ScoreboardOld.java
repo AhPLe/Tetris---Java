@@ -10,11 +10,14 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Rectangle;
+//import javax.swing.SwingWorker;
 
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
+
 import com.arthur.tetris.framework.Controls;
 
-public class ScoreboardOld extends JPanel{
+public class ScoreboardOld extends JPanel{  
 
 	private Dimension dimensionBoard;
 	public static int WIDTH;
@@ -32,7 +35,6 @@ public class ScoreboardOld extends JPanel{
 	private static int borderHeight = 50;
 	
 	public ScoreboardOld() {
-		setVisible(true);
 		setBackground(COLOR);
 		
 	}
@@ -40,7 +42,7 @@ public class ScoreboardOld extends JPanel{
 	public void start() {
 		WIDTH = getWidth();
 		HEIGHT = getHeight();
-		this.repaint();
+		setVisible(true);
 	}
 	
 	public void paintComponent(Graphics g) {
@@ -49,6 +51,8 @@ public class ScoreboardOld extends JPanel{
 		g.fillRect(0,  0,  getWidth(), getHeight());
 		
 		paintDirections(g);
+		
+		g.dispose();
 		
 	}
 	
@@ -68,9 +72,9 @@ public class ScoreboardOld extends JPanel{
 			g.drawString(Controls.getName(Controls.controls[i]), (int)(1*(WIDTH - spacing*2)/(3*columns)), (int)((2 + i)*(HEIGHT - 2*spacing)/rows));
 			g.drawString(Controls.getControlString(Controls.controls[i]), (int)(7*(WIDTH - spacing*2)/(3*columns)), (int)((2 + i)*(HEIGHT - 2*spacing)/rows));
 		}
-		//g.drawString("Tetris", dimensionBoard.width/3,  SPACING);
-		
+			
 	}
+	
 	
 	
 }

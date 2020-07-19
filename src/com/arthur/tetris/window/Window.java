@@ -14,6 +14,7 @@ package com.arthur.tetris.window;
 import java.awt.CardLayout;
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
+import java.awt.event.WindowEvent;
 
 import javax.swing.JFrame;
 
@@ -24,6 +25,7 @@ public class Window {
 	//so the main dimension was defined there
 	private static final int height = Display.HEIGHT;
 	public static final String title = "Tetris";
+	private static JFrame frame;
 	
 	public Window(int w, int h, String title, Display display) {
 		
@@ -36,7 +38,7 @@ public class Window {
 		display.setMinimumSize(dimension);
 		
 		
-		JFrame frame = new JFrame(title);
+		frame = new JFrame(title);
 		frame.add(display);
 		frame.pack();
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -47,7 +49,12 @@ public class Window {
 	}
 	
 	public static void main(String[] args) {
-		new Window(width, height, title, new Display());
+		new Window(width, height, title, new Display(frame));
+	}
+	
+	static void closeProgram() {
+		frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
+		// from https://stackoverflow.com/questions/1234912/how-to-programmatically-close-a-jframe
 	}
 	
 }

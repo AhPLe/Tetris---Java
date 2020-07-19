@@ -12,17 +12,17 @@ import com.arthur.tetris.window.Board;
 import com.arthur.tetris.framework.PiecePart;
 import com.arthur.tetris.framework.PieceType;
 
-public class PieceBlock{
+public class PieceBoard{
 	//this includes piece parts but does not extend PiecePart
 	
 	public Color[][] blocks;
 	
-	public PieceBlock() {
+	public PieceBoard() {
 		
 		blocks = new Color[Board.PIECEHEIGHT][Board.PIECEWIDTH];
 	}
 	
-	public void paintBlock(Graphics g) {
+	public void paintBoard(Graphics g) {
 		for(int i = 0; i < blocks.length; i++) {
 			for(int j = 0; j < blocks[i].length; j++) {
 				if (blocks[i][j] !=null) {
@@ -35,7 +35,7 @@ public class PieceBlock{
 
 	public void render(Graphics g) {
 		//sets the piece to the color of the piece
-		paintBlock(g);
+		paintBoard(g);
 	}
 	
 	
@@ -93,7 +93,7 @@ public class PieceBlock{
 			}
 		}
 		if (needErase) {
-			eraseBlocks(valuesToErase, totalErased, arrY);
+			eraseBoard(valuesToErase, totalErased, arrY);
 			//this function erases the required lines
 		}
 	}
@@ -103,7 +103,7 @@ public class PieceBlock{
 		blocks[row] = rowNew;
 	}
 	
-	public void eraseBlocks(int[] toErase, int totalErased, int arrY) {	 
+	public void eraseBoard(int[] toErase, int totalErased, int arrY) {	 
 		boolean debug = false;
 		int numErase = 0;
 		LinkedList<Color[]> temp = new LinkedList<Color[]>();

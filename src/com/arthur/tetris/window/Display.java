@@ -15,6 +15,7 @@ public class Display extends JPanel{
 	private Board board;
 	private ScoreboardOld scoreboard;
 	public Dimension dimension;
+	private javax.swing.JFrame frame;
 	private static final Dimension dimensionPart = 
 			new Dimension(Board.PIECEWIDTH*com.arthur.tetris.framework.PiecePart.BRICKSIZE, 
 					Board.PIECEHEIGHT*com.arthur.tetris.framework.PiecePart.BRICKSIZE);
@@ -28,14 +29,17 @@ public class Display extends JPanel{
 	public static int boardX = WIDTH - dimensionPart.width, boardY = SPACER;
 	public static int scoreX = SPACER, scoreY = SPACER;
 
-	public Display() {
-		/*
-		Dimension dimension = new Dimension(w, h);
+	public Display(javax.swing.JFrame frame) {
+		
+		this.frame = frame;
+		Dimension dimension = new Dimension(WIDTH, HEIGHT);
 		
 		setPreferredSize(dimension);
 		setMaximumSize(dimension);
 		setMinimumSize(dimension);
-		*/
+		
+		/* code to add the keylistener */
+		
 		//System.out.println("WIDTH and HEIGHT are " + String.valueOf(this.WIDTH) + "," +  this.HEIGHT);
 		
 		//CardLayout layout
@@ -47,33 +51,45 @@ public class Display extends JPanel{
 		WIDTH= getWidth();
 		HEIGHT= getHeight();
 		
-		board = new Board();
-		scoreboard = new ScoreboardOld();
 		
+		scoreboard = new ScoreboardOld();
+		scoreboard.setBounds(scoreX, scoreY, dimensionPart.width, dimensionPart.height);
+		board = new Board(this);
+		board.setBounds(boardX, boardY, dimensionPart.width, dimensionPart.height);
+		
+		this.layout = new GridLayout(1, 2);
+		this.setLayout(layout);
+		this.add(scoreboard);
+		this.add(board);
+		scoreboard.setPreferredSize(dimensionPart);
+		scoreboard.setMaximumSize(dimensionPart);
+		scoreboard.setMinimumSize(dimensionPart);
+		scoreboard.start();
+		
+		/* code to add the keyevent */
+		//score2 = new ScoreboardGBL(new GridBagLayout,);
 		//board.setLayout(null);
 		//scoreboard.setLayout(null);
 		
-		board.setBounds(boardX, boardY, dimensionPart.width, dimensionPart.height);
-		scoreboard.setBounds(scoreX, scoreY, dimensionPart.width, dimensionPart.height);
-		
-		this.layout = new GridLayout(1, 2);
-		
-
-		add(scoreboard);
-		add(board);
 		
 		board.setPreferredSize(dimensionPart);
 		board.setMaximumSize(dimensionPart);
 		board.setMinimumSize(dimensionPart);
 		
-		scoreboard.setPreferredSize(dimensionPart);
-		scoreboard.setMaximumSize(dimensionPart);
-		scoreboard.setMinimumSize(dimensionPart);
+		
 		
 		setVisible(true);
 		setBackground(Color.CYAN);
-		scoreboard.start();
+		
+		
 		board.start();
 	}
 	
+	public void cycleEnd() {
+		scoreboard.repaint();
+	}
+	
+	public void closeProgram() {
+		Window.closeProgram();
+	}
 }

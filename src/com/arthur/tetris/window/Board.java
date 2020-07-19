@@ -7,6 +7,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyListener;
 
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 
 import com.arthur.tetris.framework.KeyInput;
@@ -15,51 +16,64 @@ import com.arthur.tetris.framework.State;
 import com.arthur.tetris.window.Handler;
 import com.arthur.tetris.objects.*;
 
-public class Board extends JPanel implements Runnable{
+public class Board extends JPanel{
 	
 	private boolean running = false;
-	private Thread thread;
+	// private Thread thread;
 	public static int WIDTH, HEIGHT;
 	Handler handler;
+	Display display;
+	private static final boolean verbose = Handler.verbose;
 	public static final int PIECEWIDTH = 10;
 	public static final int PIECEHEIGHT = 20;
 	public static final Color COLOR = Color.BLACK;
 	
 	private ActionListener timeListen;
-	public Timer timer;
-	private int initialPause = 2000;
-	private int speed = 500; //speed at which things need to move
+	private Timer timer;
+	private int initialDelay= 750;
+	private int speed = 200; //speed at which things need to move
 	
 	
-	public Board() {
-		setVisible(true);
+	public Board(Display display) {
+		this.display = display;
 		setBackground(COLOR);
 		
-		this.timeListen = new ActionListener() {
+		
+		
+		this.timeListen = new ActionListener() { // keyListener likely implemented here
 			
 			public void actionPerformed(ActionEvent e) {
+				// handles the movement every time the timer pops
+				if (verbose)
+					System.out.println("an action was performed");
 				if (running && handler.getState() == State.alive) {
+					if (verbose)
+						System.out.println("an action should happen");
 					handler.move();
-					timer.restart();
 				}
 				else {
-					timer.stop();
+					;//timer.stop();
 				}
 			}
 		};
 		handler = new Handler(this);
+		
 	}
 	
 	public void init() {
-		setFocusable(true);
+		
 		WIDTH = getWidth();
 		HEIGHT = getHeight();
+		this.addKeyListener(new KeyInput(display, this, handler));  // keyListener added here
+		this.setFocusable(true); // this needs to have and mostly keep focus to properly implement KeyInput
+		setVisible(true);
 		
-		this.addKeyListener(new KeyInput(this, handler));
 		
 		this.timer = new Timer(speed, timeListen);
-		timer.setInitialDelay(initialPause);
-		handler.setState(State.paused);
+		timer.setInitialDelay(initialDelay);
+		handler.setState(State.paused); //State.paused
+		this.requestFocus();
+		
 		//add creation of objects through create of handler here
 		
 		//add a menu here eventually menu = new Menu();
@@ -69,17 +83,15 @@ public class Board extends JPanel implements Runnable{
 	}
 	
 	public synchronized void start() {
+		init();
+		startTimer();
 		if (running) {
 			return;
 		}
 		
 		running = true;
-		thread = new Thread(this);
-		thread.start(); //starts thread to implement run method of game
-		
-	}
-	
-	public void running() {
+		// thread = new Thread(this); // old implementation, did not have a single point actions were performed on (timer, movement, etc.)
+		// thread.start(); //starts thread to implement run method of game
 		
 	}
 	
@@ -94,25 +106,12 @@ public class Board extends JPanel implements Runnable{
 		g.dispose();
 	}
 
-	
+	/* this used to be a thread, so needed a run method. The changes to timer mean this probaly doesn't happen anymore
 	public void run() {
-		init();
 		
-		while(running) {
-			//implement game in this loop
-			//game loop
-			
-			//handler.move(); implemented through timer
-			
-			repaint();
-			
-			try {
-				thread.sleep(23);//was 23, I'm not quite sure why if changed, 23 was the original number
-			}
-			catch(InterruptedException ie) {
-				ie.printStackTrace();
-			}
-		}
+	}*/
+	public void changeMade() {
+		repaint();
 	}
 	
 	public boolean isRunning() {
@@ -121,9 +120,21 @@ public class Board extends JPanel implements Runnable{
 	
 	public void stopTimer() {
 		timer.stop();
+		running = false;
 	}
 	
 	public void startTimer() {
-		timer.restart();
+		timer.start();
+		running = true;
 	}
+	
+	public void restart() {
+		timer.restart();
+		running = true;
+	}
+	
+	public void nextPiece() {
+		display.cycleEnd();
+	}
+	
 }

@@ -11,7 +11,7 @@ import javax.swing.Timer;
 //import com.arthur.tetris.framework.MoveListener;
 import com.arthur.tetris.framework.PieceType;
 import com.arthur.tetris.framework.State;
-import com.arthur.tetris.objects.PieceBlock;
+import com.arthur.tetris.objects.PieceBoard;
 import com.arthur.tetris.objects.Piece;
 import java.util.Random;
 
@@ -20,11 +20,12 @@ public class Handler {
 	Piece curPiece;
 
 	private Board board;
-	private PieceBlock pieceBlock;
+	private PieceBoard pieceBoard;
 	private Random random;
 	private State state;
 	private boolean deadStart = false;
 	
+	public static final boolean verbose = false;
 	private static final Color COLORTEXT = Color.WHITE;
 	private static final String PAUSED = "Paused";
 	private static final int ROOMTEXTPAUSED = 80;
@@ -37,19 +38,23 @@ public class Handler {
 	
 	public Handler(Board board) {
 		this.board = board;
-		this.pieceBlock = new PieceBlock();
+		this.pieceBoard = new PieceBoard();
 		random = new Random();
 		this.state = State.dead;
 		newPiece();
+		changeMade();
 		
 
 	}
 	
 	public void newPiece() {
+		board.nextPiece();
 		int nextPieceValue = random.nextInt(PieceType.values().length);
+		if (verbose)
+			System.out.println("A new piece is being made");
 		curPiece = new Piece(((int)(Board.PIECEWIDTH/2)-1)*Piece.BRICKSIZE, 0, 
-				PieceType.values()[nextPieceValue] , this, pieceBlock);
-		if (pieceBlock.isBlocked(((int)(Board.PIECEWIDTH/2)-1)*Piece.BRICKSIZE, 0, curPiece.getShape())){
+				PieceType.values()[nextPieceValue] , this, pieceBoard);
+		if (pieceBoard.isBlocked(((int)(Board.PIECEWIDTH/2)-1)*Piece.BRICKSIZE, 0, curPiece.getShape())){
 			setState(State.dead);
 		}
 		//the random works, pieceType needs to be fleshed out and implemented
@@ -59,7 +64,7 @@ public class Handler {
 	
 	public void render(Graphics g) {
 		//if doing this with backfill instead, this and board's update process will need to change
-		pieceBlock.render(g);
+		pieceBoard.render(g);
 		curPiece.render(g);
 		//if (getState() != State.alive) {
 			if (state == State.paused) {
@@ -75,7 +80,7 @@ public class Handler {
 			
 				g.drawString(PRESSP, (int)(Board.WIDTH/2 - ROOMTEXTPRESSP), (int)(Board.HEIGHT*2/3));
 			}
-			else if (state == state.dead){
+			else if (state == State.dead){
 				Font font = new Font("arial", Font.BOLD, SIZETEXTHEADING);
 				g.setFont(font);
 				g.setColor(COLORTEXT);
@@ -94,40 +99,50 @@ public class Handler {
 	
 	public void restart() {
 		deadStart = false;
-		pieceBlock = new PieceBlock();
+		pieceBoard = new PieceBoard();
 		System.gc();
-		board.startTimer();
+		board.restart();
 		newPiece();
 	}
 	
 	public void move() {
-		if (!curPiece.moveTime()){
-			pieceBlock.addPiece(curPiece);
-			newPiece();
+		if (!curPiece.moveOne()){
+			pieceBoard.addPiece(curPiece); 	// the piece was blocked
+			newPiece();						// since it's only moving down one a new piece is made
 		}
+		changeMade();
 	}
 	
 	public void moveRight() {
 		curPiece.moveRight();
+		changeMade();
 	}
 	
 	public void moveLeft() {
 		curPiece.moveLeft();
+		changeMade();
 	}
 	
 	public void moveDown() {
 		curPiece.moveDown();
-		pieceBlock.addPiece(curPiece);
+		pieceBoard.addPiece(curPiece);
 		newPiece();
+		changeMade();
 		//need to implement, must get possible positions from the board
+	}
+	
+	public void changeMade() {
+		board.changeMade();
 	}
 	
 	public void rotateClockwise() {
 		curPiece.rotateClockwise();
+		board.changeMade();
 	}
 	
 	public void rotateCounterClockwise() {
 		curPiece.rotateCounterClockwise();
+		board.changeMade();
 	}
 	
 	public State getState() {

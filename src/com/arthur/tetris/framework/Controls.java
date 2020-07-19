@@ -1,7 +1,7 @@
 package com.arthur.tetris.framework;
 
 public class Controls {
-	public static final String[] controls = {"left", "right", "clockwise", "counterclockwise", "down", "drop", "pause"};
+	public static final String[] controls = {"left", "right", "clockwise", "counterclockwise", "down", "drop", "pause", "quit"};
 	
 	public static final String AddArrow = " arrow";
 	public static final String LeftTrigger = "Left";
@@ -11,6 +11,7 @@ public class Controls {
 	public static final String DownTrigger = "Z";
 	public static final String DropTrigger = "Space";
 	public static final String PauseTrigger = "P";
+	public static final String QuitTrigger = "Q";
 	
 	public static final String LeftName = "Move Left";
 	public static final String RightName = "Move Right";
@@ -19,7 +20,7 @@ public class Controls {
 	public static final String DownName = "Down";
 	public static final String DropName = "Drop";
 	public static final String PauseName = "Pause";
-	
+	public static final String QuitName = "Quit";
 	
 	public static String getControlString(String test) {
 		String toReturn = "";
@@ -38,6 +39,8 @@ public class Controls {
 			return DropTrigger;
 		case "pause":
 			return PauseTrigger;
+		case "quit":
+			return QuitTrigger;
 		}
 		return toReturn;
 	}
@@ -59,6 +62,8 @@ public class Controls {
 			return DropName;
 		case "pause":
 			return PauseName;
+		case "quit":
+			return QuitName;
 		}
 		return toReturn;
 	}
